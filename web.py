@@ -24,9 +24,13 @@ def ensure_db_initialized():
     if first_time:
         from database import add_recipe
         add_recipe("andrey", "Борщ по-домашнему", "Ароматный борщ с говядиной и свёклой",
-                   None, "https://picsum.photos/400", "Любимый борщ от бабушки")
-        add_recipe("anna", "Сырники", "Пышные творожные сырники с ванилью",
-                   None, "https://picsum.photos/401", "Лучшее утро начинается с сырников ☕")
+           None, "https://upload.wikimedia.org/wikipedia/commons/5/5a/Borscht_served.jpg",
+           "Любимый борщ от бабушки 🍲")
+
+add_recipe("anna", "Сырники", "Пышные творожные сырники с ванилью",
+           None, "https://upload.wikimedia.org/wikipedia/commons/5/5a/Syrniki_with_sour_cream.jpg",
+           "Лучшее утро начинается с сырников ☕")
+
         print("✅ Database initialized and sample recipes added!")
 
 ensure_db_initialized()
