@@ -1,58 +1,52 @@
 {% extends "base.html" %}
-{% block title %}{{ r.title }} — CookNet AI{% endblock %}
+{% block title %}{{ r.title }} | CookNet AI{% endblock %}
 {% block content %}
 
-<div class="container">
-  <div class="recipe-card">
-    <img src="{{ r.photo_url or '/static/no-photo.jpg' }}" alt="{{ r.title }}">
+<div class="recipe-card">
+  <h2>{{ r.title }}</h2>
+  <p><strong>Автор:</strong> <a href="/u/{{ r.username }}">@{{ r.username }}</a></p>
 
-    <h2>{{ r.title }}</h2>
-    <p class="text-muted">
-      👤 Автор: <strong>@{{ r.username }}</strong>  
-      <br>
-      🕒 {{ r.created_at[:10] }}
-    </p>
-
-    <p style="font-size: 18px; margin-top: 10px;">
-      {{ r.ai_caption or r.description }}
-    </p>
-
-    <form method="post" action="/like/{{ r.id }}">
-      <button class="like-btn" type="submit">❤️ Лайк ({{ r.likes }})</button>
-      <a href="/recipes" style="margin-left:10px;">← Назад к рецептам</a>
-    </form>
-  </div>
-
-  <hr>
-
-  <h3>💬 Комментарии</h3>
-
-  {% if r.comments %}
-    {% for c in r.comments %}
-      <div class="recipe-card" style="padding:10px; background:#fff9f2;">
-        <strong>@{{ c.username }}</strong>
-        <p style="margin:5px 0;">{{ c.text }}</p>
-        <small style="color:#999;">{{ c.created_at[:16].replace('T',' ') }}</small>
-      </div>
-    {% endfor %}
-  {% else %}
-    <p class="text-muted">Пока нет комментариев 😌</p>
+  {% if r.photo_url %}
+    <img src="{{ r.photo_url }}" alt="{{ r.title }}">
   {% endif %}
 
-  <hr>
+  {% if r.video_url %}
+    <video controls style="width:100%; border-radius:10px; margin-top:10px;">
+      <source src="{{ r.video_url }}" type="video/mp4">
+      Ваш браузер не поддерживает видео.
+    </video>
+  {% endif %}
 
-  <h4>✍️ Добавить комментарий</h4>
-  <form method="post" action="/comment/{{ r.id }}">
-    <input type="text" name="username" placeholder="Ваш ник" required
-           style="width:100%;padding:8px;margin-bottom:8px;border-radius:6px;border:1px solid #ccc;">
-    <textarea name="text" placeholder="Ваш комментарий..." required
-              style="width:100%;padding:8px;height:80px;margin-bottom:8px;border-radius:6px;border:1px solid #ccc;"></textarea>
-    <label>Сколько будет 2+3? (проверка)</label>
-    <input type="text" name="captcha" required
-           style="width:100px;padding:5px;margin:5px;border-radius:6px;border:1px solid #aaa;">
-    <br>
-    <button type="submit" class="like-btn">💬 Отправить</button>
+  <p style="margin-top:10px;">{{ r.description }}</p>
+  <p><em>{{ r.ai_caption }}</em></p>
+
+  <form method="post" action="/like/{{ r.id }}">
+    <button class="like-btn" type="submit">❤️ {{ r.likes }}</button>
   </form>
 </div>
+
+<h3>💬 Комментарии</h3>
+
+{% if r.comments %}
+  {% for c in r.comments %}
+    <div class="recipe-card" style="background:#fff8e1;">
+      <p><strong>@{{ c.username }}</strong> — {{ c.text }}</p>
+      <small>{{ c.created_at }}</small>
+    </div>
+  {% endfor %}
+{% else %}
+  <p>Пока нет комментариев. Будь первым!</p>
+{% endif %}
+
+<form method="post" action="/comment/{{ r.id }}" style="margin-top:20px;">
+  <input type="text" name="username" placeholder="Ваше имя" required style="padding:6px; border-radius:6px; border:1px solid #ccc; width:30%;">
+  <br><br>
+  <textarea name="text" placeholder="Ваш комментарий..." required style="width:100%; height:80px; border-radius:8px; padding:8px;"></textarea>
+  <br><br>
+  <label>Сколько будет 2+3? (капча)</label>
+  <input type="text" name="captcha" required style="padding:6px; width:60px; margin-left:10px;">
+  <br><br>
+  <button type="submit" class="like-btn">Отправить 💬</button>
+</form>
 
 {% endblock %}
