@@ -1,35 +1,109 @@
 {% extends "base.html" %}
-{% block title %}Рецепты | CookNet AI{% endblock %}
+{% block title %}Рецепты — CookNet AI{% endblock %}
 {% block content %}
 
-<h2 style="text-align:center; margin-bottom: 20px;">🍽 Все рецепты</h2>
+<h2 style="text-align:center; color:#ff7043;">🍲 Лента рецептов</h2>
+<p style="text-align:center; color:#777;">Найди вдохновение и делись своими блюдами!</p>
 
-{% if recipes %}
+<div class="grid">
   {% for r in recipes %}
-    <div class="recipe-card">
+  <div class="card">
+    {% if r.video_url %}
+      <video src="{{ r.video_url }}" controls poster="{{ r.photo_url }}"></video>
+    {% else %}
+      <img src="{{ r.photo_url }}" alt="{{ r.title }}">
+    {% endif %}
+    <div class="card-body">
       <h3>{{ r.title }}</h3>
-      <p><strong>Автор:</strong> <a href="/u/{{ r.username }}">@{{ r.username }}</a></p>
-
-      {% if r.photo_url %}
-        <img src="{{ r.photo_url }}" alt="{{ r.title }}">
-      {% endif %}
-
-      {% if r.video_url %}
-        <video controls style="width:100%; border-radius:10px; margin-top:10px;">
-          <source src="{{ r.video_url }}" type="video/mp4">
-          Ваш браузер не поддерживает видео.
-        </video>
-      {% endif %}
-
-      <p style="margin-top:10px;">{{ r.ai_caption or r.description }}</p>
-      <form method="post" action="/like/{{ r.id }}">
-        <button class="like-btn" type="submit">❤️ {{ r.likes }}</button>
-        <a href="/recipe/{{ r.id }}" style="margin-left:10px;">Подробнее →</a>
-      </form>
+      <p>{{ r.ai_caption or r.description }}</p>
+      <div class="card-footer">
+        <form method="post" action="/like/{{ r.id }}">
+          <button class="like">❤️ {{ r.likes }}</button>
+        </form>
+        <a class="btn" href="/recipe/{{ r.id }}">Подробнее</a>
+      </div>
     </div>
+  </div>
   {% endfor %}
-{% else %}
-  <p style="text-align:center;">Пока нет рецептов 😢</p>
-{% endif %}
+</div>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+    margin-top: 25px;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+    transition: 0.3s;
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+  }
+
+  .card img, .card video {
+    width: 100%;
+    height: 190px;
+    object-fit: cover;
+  }
+
+  .card-body {
+    padding: 15px;
+  }
+
+  .card-body h3 {
+    margin: 0 0 6px;
+    font-size: 18px;
+    color: #333;
+  }
+
+  .card-body p {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+    min-height: 40px;
+  }
+
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+  }
+
+  .btn {
+    background: #ff7043;
+    color: white;
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    transition: 0.2s;
+  }
+
+  .btn:hover {
+    background: #ff5722;
+  }
+
+  .like {
+    border: none;
+    background: none;
+    color: #ff7043;
+    cursor: pointer;
+    font-size: 15px;
+  }
+
+  h2 {
+    font-size: 26px;
+    margin-bottom: 5px;
+  }
+</style>
 
 {% endblock %}
