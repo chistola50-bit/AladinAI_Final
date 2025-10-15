@@ -13,6 +13,24 @@ from database import (
     get_or_create_invite, use_invite
 )
 from utils import generate_caption
+from pathlib import Path
+
+# --- init database automatically ---
+def ensure_db_initialized():
+    """Проверяет, создана ли база, и добавляет тестовые рецепты при первом запуске."""
+    db_file = Path("cooknet.db")
+    first_time = not db_file.exists()
+    init_db()
+    if first_time:
+        from database import add_recipe
+        add_recipe("andrey", "Борщ по-домашнему", "Ароматный борщ с говядиной и свёклой",
+                   None, "https://picsum.photos/400", "Любимый борщ от бабушки")
+        add_recipe("anna", "Сырники", "Пышные творожные сырники с ванилью",
+                   None, "https://picsum.photos/401", "Лучшее утро начинается с сырников ☕")
+        print("✅ Database initialized and sample recipes added!")
+
+ensure_db_initialized()
+
 
 logging.basicConfig(level=logging.INFO)
 app = Flask(__name__, template_folder="templates", static_folder="static")
