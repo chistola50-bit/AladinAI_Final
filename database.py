@@ -1,11 +1,18 @@
 import sqlite3
+import os
 from datetime import datetime
 import secrets
 
-DB = "cooknet.db"
+# ✅ База хранится на постоянном диске Render
+DB_PATH = "/data/cooknet.db"
+
+# Если запускается локально — использовать локальный файл
+if not os.path.exists("/data"):
+    os.makedirs("data", exist_ok=True)
+    DB_PATH = "data/cooknet.db"
 
 def _conn():
-    return sqlite3.connect(DB)
+    return sqlite3.connect(DB_PATH)
 
 def init_db():
     con = _conn(); cur = con.cursor()
@@ -84,10 +91,11 @@ def get_recipe(rid:int):
     cur.execute("""SELECT id,username,title,description,photo_id,photo_url,ai_caption,likes,created_at
                    FROM recipes WHERE id=?""", (rid,))
     r = cur.fetchone()
-    if not r: con.close(); return None
+    if not r: 
+        con.close(); 
+        return None
     keys = ["id","username","title","description","photo_id","photo_url","ai_caption","likes","created_at"]
     d = dict(zip(keys,r))
-    # comments
     cur.execute("""SELECT username,text,created_at FROM comments WHERE recipe_id=? ORDER BY id DESC LIMIT 50""",(rid,))
     d["comments"] = [{"username":u,"text":t,"created_at":ts} for (u,t,ts) in cur.fetchall()]
     con.close()
