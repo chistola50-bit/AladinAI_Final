@@ -16,13 +16,13 @@ from utils import generate_caption
 
 logging.basicConfig(level=logging.INFO)
 app = Flask(__name__, template_folder="templates", static_folder="static")
-app.secret_key = os.getenv("FLASK_SECRET", "cooknet_secret")  # для flash
+app.secret_key = os.getenv("FLASK_SECRET", "cooknet_secret")
 
 BOT_TOKEN = os.getenv("BOT_TOKEN") or os.getenv("TOKEN")
 if not BOT_TOKEN:
     raise RuntimeError("BOT_TOKEN not set")
 
-# ✅ Правильный Render-домен
+# правильный домен (или из переменной окружения)
 BACKEND_URL = (os.getenv("COOKNET_URL") or "https://aladinai-final.onrender.com").strip()
 WEBHOOK_PATH = f"/webhook/{BOT_TOKEN}"
 WEBHOOK_URL = BACKEND_URL.rstrip("/") + WEBHOOK_PATH
@@ -33,8 +33,7 @@ bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher(bot, storage=MemoryStorage())
 
 # --- anti-spam (bot + web) ---
-user_last = {}
-ip_last = {}
+user_last, ip_last = {}, {}
 SPAM_DELAY = 3
 STATE_TIMEOUT = 300
 
@@ -193,6 +192,11 @@ def recipe_page(rid):
     if not r: abort(404)
     return render_template("recipe.html", r=r)
 
+@app.route("/top")
+def top_page():
+    top_recipes = get_top_recipes(limit=20)
+    return render_template("top.html", recipes=top_recipes)
+
 @app.post("/like/<int:rid>")
 def like_route(rid):
     if is_ip_spam(request.remote_addr): return redirect(request.referrer or url_for("recipes_page"))
@@ -240,17 +244,45 @@ def join_via_invite(code):
         return "<h3>❌ Неверная или устаревшая ссылка.</h3>", 400
     return "<h3>✅ Инвайт активирован! Напишите боту /start, чтобы завершить.</h3>"
 
-# --------- DB INIT (временный маршрут для Render) ----------
+# --- healthcheck для Render
+@app.route("/health")
+def health():
+    return "OK", 200
+
+# --------- DB INIT (разовая инициализация, защищена секретом) ----------
 @app.route("/init")
 def init_data():
+    # Чтобы посторонние не дергали /init — можно задать INIT_SECRET в переменных Render
+    need_secret = os.getenv("INIT_SECRET")
+    secret_qs = request.args.get("s")
+    if need_secret and secret_qs != need_secret:
+        return "<h3>⛔ Доступ запрещён</h3>", 403
+
     try:
-        from database import init_db, add_recipe
+        # если база уже не пустая — ничего не делаем
+        if get_recipes(limit=1):
+            return "<h3>ℹ️ База уже инициализирована.</h3>"
+
         init_db()
-        add_recipe("andrey", "Борщ по-домашнему", "Ароматный борщ с говядиной и свёклой", None, "https://picsum.photos/400", "Любимый борщ от бабушки")
-        add_recipe("anna", "Сырники", "Пышные творожные сырники с ванилью", None, "https://picsum.photos/401", "Лучшее утро начинается с сырников ☕")
-        return "<h3>✅ База данных успешно создана и заполнена тестовыми рецептами!</h3>"
+        # стабильные картинки (борщ и сырники), не рандомные
+        add_recipe(
+            "andrey", "Борщ по-домашнему",
+            "Ароматный борщ с говядиной и свёклой",
+            None,
+            "https://upload.wikimedia.org/wikipedia/commons/5/5c/Borscht_served.jpg",
+            "Любимый борщ от бабушки"
+        )
+        add_recipe(
+            "anna", "Сырники",
+            "Пышные творожные сырники с ванилью",
+            None,
+            "https://upload.wikimedia.org/wikipedia/commons/4/47/Syrnyky.jpg",
+            "Лучшее утро начинается с сырников ☕"
+        )
+        return redirect(url_for("recipes_page"))
     except Exception as e:
-        return f"<h3>❌ Ошибка инициализации базы: {e}</h3>"
+        logging.exception("Init error")
+        return f"<h3>❌ Ошибка инициализации базы: {e}</h3>", 500
 
 # --------- WEBHOOK ----------
 _loop = asyncio.new_event_loop()
@@ -280,6 +312,7 @@ async def _process_update(data):
         from aiogram import Bot, Dispatcher
         Bot.set_current(bot)
         Dispatcher.set_current(dp)
+
         user = None
         if upd.message and upd.message.from_user:
             user = upd.message.from_user
@@ -287,6 +320,7 @@ async def _process_update(data):
             user = upd.callback_query.from_user
         if user:
             upsert_user(user.id, user.username or f"id{user.id}")
+
         await dp.process_update(upd)
     except Exception as ex:
         logging.exception(f"Process update error: {ex}")
