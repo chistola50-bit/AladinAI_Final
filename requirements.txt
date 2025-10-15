@@ -5,3 +5,4 @@ SQLAlchemy==2.0.23
 Jinja2==3.1.6
 gunicorn==22.0.0
 asgiref==3.10.0
+openai
