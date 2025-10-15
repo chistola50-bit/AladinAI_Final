@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Добавить рецепт — CookNet AI{% endblock %}
+{% block content %}
+
+<h2 style="text-align:center; color:#ff7043;">➕ Добавить новый рецепт</h2>
+<p style="text-align:center; color:#777;">Поделитесь своим кулинарным шедевром!</p>
+
+<form method="post" action="/add" enctype="multipart/form-data" class="add-form">
+  <label>Название блюда:</label>
+  <input type="text" name="title" required placeholder="Например: Борщ по-домашнему">
+
+  <label>Описание:</label>
+  <textarea name="description" rows="4" required placeholder="Опишите процесс приготовления..."></textarea>
+
+  <label>Ссылка на фото (URL):</label>
+  <input type="url" name="photo_url" placeholder="https://пример.фото.jpg">
+
+  <label>Ссылка на видео (URL):</label>
+  <input type="url" name="video_url" placeholder="https://пример-видео.mp4">
+
+  <label>Ваш никнейм:</label>
+  <input type="text" name="username" required placeholder="andrey">
+
+  <div class="captcha">
+    <label>Сколько будет 2 + 3?</label>
+    <input type="text" name="captcha" required placeholder="Введите ответ">
+  </div>
+
+  <button type="submit">✅ Сохранить рецепт</button>
+</form>
+
+<style>
+  .add-form {
+    max-width: 600px;
+    margin: 25px auto;
+    background: #fff;
+    padding: 25px;
+    border-radius: 14px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .add-form label {
+    font-weight: 600;
+    color: #333;
+  }
+
+  .add-form input, .add-form textarea {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 10px;
+    font-size: 15px;
+    width: 100%;
+  }
+
+  .add-form button {
+    background: #ff7043;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  .add-form button:hover {
+    background: #ff5722;
+  }
+
+  .captcha {
+    margin-top: 10px;
+  }
+</style>
+
+{% endblock %}
