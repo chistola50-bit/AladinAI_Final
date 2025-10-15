@@ -2,30 +2,39 @@
 {% block title %}Рецепты — CookNet AI{% endblock %}
 {% block content %}
 
-<h2 style="text-align:center; color:#ff7043;">🍲 Лента рецептов</h2>
-<p style="text-align:center; color:#777;">Найди вдохновение и делись своими блюдами!</p>
+<h2 style="text-align:center; color:#ff7043; margin-top:10px;">🍳 Лента рецептов</h2>
+<p style="text-align:center; color:#777;">Здесь вы сможете делиться своими кулинарными шедеврами!</p>
 
-<div class="grid">
-  {% for r in recipes %}
-  <div class="card">
-    {% if r.video_url %}
-      <video src="{{ r.video_url }}" controls poster="{{ r.photo_url }}"></video>
-    {% else %}
-      <img src="{{ r.photo_url }}" alt="{{ r.title }}">
-    {% endif %}
-    <div class="card-body">
-      <h3>{{ r.title }}</h3>
-      <p>{{ r.ai_caption or r.description }}</p>
-      <div class="card-footer">
-        <form method="post" action="/like/{{ r.id }}">
-          <button class="like">❤️ {{ r.likes }}</button>
-        </form>
-        <a class="btn" href="/recipe/{{ r.id }}">Подробнее</a>
-      </div>
-    </div>
+{% if recipes %}
+  <div class="grid">
+    {% for r in recipes %}
+      {% if r.photo_url and (r.title or r.description) %}
+        <div class="card">
+          {% if r.video_url %}
+            <video src="{{ r.video_url }}" controls poster="{{ r.photo_url }}"></video>
+          {% else %}
+            <img src="{{ r.photo_url }}" alt="{{ r.title }}">
+          {% endif %}
+          <div class="card-body">
+            <h3>{{ r.title }}</h3>
+            <p>{{ r.ai_caption or r.description }}</p>
+            <div class="card-footer">
+              <form method="post" action="/like/{{ r.id }}">
+                <button class="like">❤️ {{ r.likes }}</button>
+              </form>
+              <a class="btn" href="/recipe/{{ r.id }}">Подробнее</a>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+    {% endfor %}
   </div>
-  {% endfor %}
-</div>
+{% else %}
+  <div class="empty">
+    <p>📭 Пока нет рецептов. Создайте свой первый!</p>
+    <a class="add-btn" href="/add">➕ Добавить рецепт</a>
+  </div>
+{% endif %}
 
 <style>
   .grid {
@@ -100,9 +109,26 @@
     font-size: 15px;
   }
 
-  h2 {
-    font-size: 26px;
-    margin-bottom: 5px;
+  .empty {
+    text-align: center;
+    margin-top: 50px;
+    color: #666;
+  }
+
+  .add-btn {
+    display: inline-block;
+    background: #ff7043;
+    color: white;
+    text-decoration: none;
+    padding: 12px 22px;
+    border-radius: 8px;
+    font-weight: bold;
+    margin-top: 10px;
+    transition: 0.3s;
+  }
+
+  .add-btn:hover {
+    background: #ff5722;
   }
 </style>
 
