@@ -1,84 +1,144 @@
-{% extends "base.html" %}
-{% block title %}Чат — CookNet AI{% endblock %}
-{% block content %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>💬 Чат — CookNet AI</title>
+  <link rel="icon" href="https://cdn-icons-png.flaticon.com/512/857/857681.png">
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      margin: 0;
+      background: #f2f2f2;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
 
-<div class="container">
-  <h2>💬 Общий кулинарный чат</h2>
-  <p class="text-muted">Обсуждайте рецепты, делитесь советами и идеями! 🍳</p>
+    header {
+      background: linear-gradient(90deg, #ff7043, #ffb74d);
+      color: white;
+      padding: 12px 20px;
+      text-align: center;
+      font-weight: bold;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
 
-  <div class="chat-box">
-    {% for m in msgs %}
-      <div class="msg {% if loop.index is even %}right{% else %}left{% endif %}">
-        <div class="bubble">
-          <strong>@{{ m.username }}</strong><br>
-          <span>{{ m.text }}</span><br>
-          <small>{{ m.created_at[:16].replace('T',' ') }}</small>
-        </div>
-      </div>
-    {% else %}
-      <p style="text-align:center;color:#777;">Пока сообщений нет. Напишите первым! 🥰</p>
-    {% endfor %}
+    .chat-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      scroll-behavior: smooth;
+    }
+
+    .msg {
+      max-width: 75%;
+      padding: 10px 14px;
+      border-radius: 16px;
+      word-wrap: break-word;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .msg.user {
+      align-self: flex-end;
+      background: #ff7043;
+      color: white;
+      border-bottom-right-radius: 4px;
+    }
+
+    .msg.other {
+      align-self: flex-start;
+      background: #fff;
+      border-bottom-left-radius: 4px;
+      border: 1px solid #ddd;
+    }
+
+    .msg small {
+      display: block;
+      font-size: 12px;
+      opacity: 0.7;
+      margin-top: 4px;
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(5px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+    form {
+      display: flex;
+      gap: 10px;
+      padding: 10px;
+      background: #fff;
+      border-top: 1px solid #ddd;
+    }
+
+    input[type=text], input[name=username] {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    input[name=username] {
+      max-width: 120px;
+    }
+
+    button {
+      background: #ff7043;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: #ff5722;
+    }
+
+    footer {
+      text-align: center;
+      padding: 8px;
+      font-size: 12px;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+
+<header>💬 Чат CookNet AI</header>
+
+<div class="chat-container" id="chatBox">
+  {% for m in msgs|reverse %}
+  <div class="msg {% if m.username == 'webuser' %}user{% else %}other{% endif %}">
+    <strong>{{ m.username }}</strong><br>
+    {{ m.text }}
+    <small>{{ m.created_at.split("T")[0] }}</small>
   </div>
-
-  <hr>
-
-  <h3>✍️ Отправить сообщение</h3>
-  <form method="post" action="/chat">
-    <input type="text" name="username" placeholder="Ваш ник" required
-           style="width:100%;padding:8px;margin-bottom:8px;border-radius:6px;border:1px solid #ccc;">
-    <textarea name="text" placeholder="Ваше сообщение..." required
-              style="width:100%;padding:8px;height:80px;margin-bottom:8px;border-radius:6px;border:1px solid #ccc;"></textarea>
-    <label>Сколько будет 2+3? (проверка)</label>
-    <input type="text" name="captcha" required
-           style="width:100px;padding:5px;margin:5px;border-radius:6px;border:1px solid #aaa;">
-    <br>
-    <button type="submit" class="like-btn">📨 Отправить</button>
-  </form>
+  {% endfor %}
 </div>
 
-<style>
-.chat-box {
-  background: #fff;
-  border-radius: 12px;
-  padding: 15px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-  margin-bottom: 25px;
-  max-height: 500px;
-  overflow-y: auto;
-}
+<form method="POST" action="/chat">
+  <input name="username" placeholder="Имя" required>
+  <input type="text" name="text" placeholder="Введите сообщение..." required>
+  <input type="text" name="captcha" placeholder="2+3=?" style="max-width:60px" required>
+  <button type="submit">Отправить</button>
+</form>
 
-.msg {
-  display: flex;
-  margin-bottom: 12px;
-}
-.msg.left { justify-content: flex-start; }
-.msg.right { justify-content: flex-end; }
+<footer>© 2025 CookNet AI</footer>
 
-.bubble {
-  background: #ffecb3;
-  border-radius: 12px;
-  padding: 10px 14px;
-  max-width: 75%;
-  word-wrap: break-word;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
-}
-.msg.right .bubble {
-  background: #ffe0b2;
-}
-.bubble strong {
-  color: #e64a19;
-}
-.bubble small {
-  color: #666;
-  font-size: 12px;
-}
+<script>
+  // Автопрокрутка вниз
+  const chatBox = document.getElementById('chatBox');
+  chatBox.scrollTop = chatBox.scrollHeight;
+</script>
 
-@media (prefers-color-scheme: dark) {
-  .chat-box { background: #2a2a2a; }
-  .bubble { background: #3b3b3b; color: #eee; }
-  .msg.right .bubble { background: #444; }
-  .bubble strong { color: #ffa270; }
-}
-</style>
-
-{% endblock %}
+</body>
+</html>
