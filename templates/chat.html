@@ -1,29 +1,84 @@
 {% extends "base.html" %}
-{% block title %}Общий чат{% endblock %}
+{% block title %}Чат — CookNet AI{% endblock %}
 {% block content %}
-<h2>💬 Общий чат</h2>
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <div class="alert alert-warning">{{ messages[0] }}</div>
-  {% endif %}
-{% endwith %}
-<form method="post" class="mb-3">
-  <div class="row g-2">
-    <div class="col-md-3"><input name="username" class="form-control" placeholder="Ваш ник (необязательно)"></div>
-    <div class="col-md-6"><input name="text" class="form-control" placeholder="Сообщение" required></div>
-    <div class="col-md-2"><input name="captcha" class="form-control" placeholder="2+3?" required></div>
-    <div class="col-md-1"><button class="btn btn-primary w-100">OK</button></div>
-  </div>
-</form>
 
-<ul class="list-group">
-  {% for m in msgs %}
-  <li class="list-group-item">
-    <strong>@{{ m.username }}</strong> <small class="text-muted">{{ m.created_at }}</small>
-    <div>{{ m.text }}</div>
-  </li>
-  {% else %}
-  <li class="list-group-item text-muted">Пока пусто.</li>
-  {% endfor %}
-</ul>
+<div class="container">
+  <h2>💬 Общий кулинарный чат</h2>
+  <p class="text-muted">Обсуждайте рецепты, делитесь советами и идеями! 🍳</p>
+
+  <div class="chat-box">
+    {% for m in msgs %}
+      <div class="msg {% if loop.index is even %}right{% else %}left{% endif %}">
+        <div class="bubble">
+          <strong>@{{ m.username }}</strong><br>
+          <span>{{ m.text }}</span><br>
+          <small>{{ m.created_at[:16].replace('T',' ') }}</small>
+        </div>
+      </div>
+    {% else %}
+      <p style="text-align:center;color:#777;">Пока сообщений нет. Напишите первым! 🥰</p>
+    {% endfor %}
+  </div>
+
+  <hr>
+
+  <h3>✍️ Отправить сообщение</h3>
+  <form method="post" action="/chat">
+    <input type="text" name="username" placeholder="Ваш ник" required
+           style="width:100%;padding:8px;margin-bottom:8px;border-radius:6px;border:1px solid #ccc;">
+    <textarea name="text" placeholder="Ваше сообщение..." required
+              style="width:100%;padding:8px;height:80px;margin-bottom:8px;border-radius:6px;border:1px solid #ccc;"></textarea>
+    <label>Сколько будет 2+3? (проверка)</label>
+    <input type="text" name="captcha" required
+           style="width:100px;padding:5px;margin:5px;border-radius:6px;border:1px solid #aaa;">
+    <br>
+    <button type="submit" class="like-btn">📨 Отправить</button>
+  </form>
+</div>
+
+<style>
+.chat-box {
+  background: #fff;
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  margin-bottom: 25px;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.msg {
+  display: flex;
+  margin-bottom: 12px;
+}
+.msg.left { justify-content: flex-start; }
+.msg.right { justify-content: flex-end; }
+
+.bubble {
+  background: #ffecb3;
+  border-radius: 12px;
+  padding: 10px 14px;
+  max-width: 75%;
+  word-wrap: break-word;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+.msg.right .bubble {
+  background: #ffe0b2;
+}
+.bubble strong {
+  color: #e64a19;
+}
+.bubble small {
+  color: #666;
+  font-size: 12px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .chat-box { background: #2a2a2a; }
+  .bubble { background: #3b3b3b; color: #eee; }
+  .msg.right .bubble { background: #444; }
+  .bubble strong { color: #ffa270; }
+}
+</style>
+
 {% endblock %}
