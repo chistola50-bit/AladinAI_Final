@@ -22,7 +22,7 @@ BOT_TOKEN = os.getenv("BOT_TOKEN") or os.getenv("TOKEN")
 if not BOT_TOKEN:
     raise RuntimeError("BOT_TOKEN not set")
 
-# ✅ Исправлено: теперь по умолчанию правильный Render-домен
+# ✅ Правильный Render-домен
 BACKEND_URL = (os.getenv("COOKNET_URL") or "https://aladinai-final.onrender.com").strip()
 WEBHOOK_PATH = f"/webhook/{BOT_TOKEN}"
 WEBHOOK_URL = BACKEND_URL.rstrip("/") + WEBHOOK_PATH
@@ -239,6 +239,18 @@ def join_via_invite(code):
     if not owner:
         return "<h3>❌ Неверная или устаревшая ссылка.</h3>", 400
     return "<h3>✅ Инвайт активирован! Напишите боту /start, чтобы завершить.</h3>"
+
+# --------- DB INIT (временный маршрут для Render) ----------
+@app.route("/init")
+def init_data():
+    try:
+        from database import init_db, add_recipe
+        init_db()
+        add_recipe("andrey", "Борщ по-домашнему", "Ароматный борщ с говядиной и свёклой", None, "https://picsum.photos/400", "Любимый борщ от бабушки")
+        add_recipe("anna", "Сырники", "Пышные творожные сырники с ванилью", None, "https://picsum.photos/401", "Лучшее утро начинается с сырников ☕")
+        return "<h3>✅ База данных успешно создана и заполнена тестовыми рецептами!</h3>"
+    except Exception as e:
+        return f"<h3>❌ Ошибка инициализации базы: {e}</h3>"
 
 # --------- WEBHOOK ----------
 _loop = asyncio.new_event_loop()
