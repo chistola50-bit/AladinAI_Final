@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Вход — CookNet AI{% endblock %}
+{% block content %}
+<h2>🔐 Вход</h2>
+<p style="color:#666">Введите имя пользователя (ник). Пароль не нужен.</p>
+<form method="post" class="add-form" style="max-width:420px;">
+  <label>Ник:</label>
+  <input type="text" name="username" required placeholder="например, andrey">
+  <button type="submit">Войти</button>
+</form>
+<style>
+  .add-form { background:#fff; padding:20px; border-radius:12px; box-shadow:0 3px 10px rgba(0,0,0,0.08); display:flex; gap:12px; flex-direction:column; }
+  .add-form input { padding:10px; border:1px solid #ddd; border-radius:8px; }
+  .add-form button { background:#ff7043; color:#fff; border:none; padding:12px; border-radius:8px; cursor:pointer; }
+  .add-form button:hover { background:#ff5722; }
+</style>
+{% endblock %}

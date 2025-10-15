@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Добавить рецепт — CookNet AI{% endblock %}
+{% block content %}
+<h2>➕ Добавить рецепт</h2>
+<form method="post" class="add-form">
+  <label>Название блюда:</label>
+  <input type="text" name="title" required placeholder="Борщ по-домашнему">
+
+  <label>Описание:</label>
+  <textarea name="description" rows="4" required placeholder="Коротко опишите рецепт..."></textarea>
+
+  <label>Ссылка на фото (URL):</label>
+  <input type="url" name="photo_url" placeholder="https://пример.фото.jpg">
+
+  <label>Ссылка на видео (URL, YouTube/MP4):</label>
+  <input type="url" name="video_url" placeholder="https://youtu.be/... или https://.../video.mp4">
+
+  <button type="submit">✅ Сохранить</button>
+</form>
+<style>
+  .add-form { max-width: 680px; margin: 16px 0; background:#fff; padding:22px; border-radius:14px; box-shadow:0 3px 10px rgba(0,0,0,0.08); display:flex; flex-direction:column; gap:12px; }
+  .add-form input, .add-form textarea { border:1px solid #ddd; border-radius:8px; padding:10px; font-size:15px; width:100%; }
+  .add-form button { background:#ff7043; color:#fff; border:none; padding:12px; border-radius:8px; font-size:16px; cursor:pointer; }
+  .add-form button:hover { background:#ff5722; }
+</style>
+{% endblock %}
