@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}📸 AI-Камера{% endblock %}
+
+{% block content %}
+<h2>📸 AI-Камера</h2>
+<p>Загрузите фото ингредиентов — и ИИ предложит, что можно приготовить 🍲</p>
+
+<form method="post" enctype="multipart/form-data" style="margin-top:20px;">
+  <input type="file" name="photo" accept="image/*" required>
+  <button type="submit">🔍 Анализировать</button>
+</form>
+
+{% if result %}
+  <hr>
+  <h3>✨ Результат анализа:</h3>
+  <div style="background:#fff; padding:15px; border-radius:10px; box-shadow:0 2px 5px rgba(0,0,0,0.1); margin-top:10px;">
+    <pre style="white-space:pre-wrap; font-family:'Segoe UI', sans-serif; line-height:1.5;">{{ result }}</pre>
+  </div>
+{% endif %}
+
+{% if not result %}
+  <p style="color:#777; margin-top:15px;">Совет: попробуйте сфотографировать продукты сверху, при хорошем освещении 📷</p>
+{% endif %}
+{% endblock %}

@@ -9,38 +9,53 @@
     body {
       font-family: "Segoe UI", sans-serif;
       margin: 0;
-      background: #f5f5f5;
+      background: #fafafa;
       color: #222;
     }
+
     header {
       background: linear-gradient(90deg, #ff7043, #ffb74d);
       color: white;
-      padding: 15px 25px;
+      padding: 12px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      flex-wrap: wrap;
     }
+
     header a {
       color: white;
       text-decoration: none;
       font-weight: bold;
       margin-left: 15px;
+      transition: 0.2s;
     }
+
     header a:hover {
       text-decoration: underline;
     }
+
+    .navbar {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
     main {
       padding: 20px;
       max-width: 900px;
       margin: auto;
     }
+
     footer {
       text-align: center;
       color: #777;
       padding: 20px;
       font-size: 14px;
     }
+
     .flash {
       background: #fff8e1;
       border: 1px solid #ffecb3;
@@ -48,39 +63,25 @@
       margin-bottom: 10px;
       border-radius: 8px;
     }
-    .recipe-card {
-      background: white;
-      border-radius: 12px;
-      padding: 15px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      transition: 0.3s;
-    }
-    .recipe-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-    }
-    .recipe-card img {
-      width: 100%;
-      border-radius: 10px;
-      margin-bottom: 10px;
-    }
-    .like-btn {
+
+    button, input[type=file] {
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
       background: #ff7043;
       color: white;
-      border: none;
-      padding: 8px 14px;
-      border-radius: 6px;
+      font-weight: bold;
       cursor: pointer;
-      transition: 0.2s;
     }
-    .like-btn:hover {
+
+    button:hover {
       background: #ff5722;
     }
-    .navbar {
-      display: flex;
-      gap: 15px;
-      align-items: center;
+
+    pre {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      font-family: "Consolas", monospace;
     }
   </style>
 </head>
@@ -89,9 +90,10 @@
 <header>
   <div><strong>🍳 CookNet AI</strong></div>
   <nav class="navbar">
-    <a href="/">Главная</a>
-    <a href="/recipes">Рецепты</a>
-    <a href="/chat">Чат</a>
+    <a href="/">🏠 Главная</a>
+    <a href="/recipes">📖 Рецепты</a>
+    <a href="/chat">💬 Чат</a>
+    <a href="/analyze">📸 AI-Камера</a>
     <a href="https://t.me/cooknet_ai_bot" target="_blank">🤖 Бот</a>
   </nav>
 </header>
@@ -108,7 +110,7 @@
 </main>
 
 <footer>
-  © 2025 CookNet AI | Сделано с ❤️ и Flask
+  © 2025 CookNet AI | Сделано с ❤️ и Flask + OpenAI
 </footer>
 
 </body>
