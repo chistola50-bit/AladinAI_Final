@@ -22,7 +22,8 @@ BOT_TOKEN = os.getenv("BOT_TOKEN") or os.getenv("TOKEN")
 if not BOT_TOKEN:
     raise RuntimeError("BOT_TOKEN not set")
 
-BACKEND_URL = (os.getenv("COOKNET_URL") or "https://cooknetai-final.onrender.com").strip()
+# ✅ Исправлено: теперь по умолчанию правильный Render-домен
+BACKEND_URL = (os.getenv("COOKNET_URL") or "https://aladinai-final.onrender.com").strip()
 WEBHOOK_PATH = f"/webhook/{BOT_TOKEN}"
 WEBHOOK_URL = BACKEND_URL.rstrip("/") + WEBHOOK_PATH
 
@@ -48,7 +49,7 @@ def is_spam(uid:int)->bool:
 def is_ip_spam(ip:str)->bool:
     now = time.time()
     last = ip_last.get(ip, 0)
-    if now - last < 2:  # пожёстче для форм
+    if now - last < 2:
         return True
     ip_last[ip] = now
     return False
@@ -198,28 +199,25 @@ def like_route(rid):
     like_recipe(rid)
     return redirect(request.referrer or url_for("recipes_page"))
 
-# --- comments form (с простой «капчей»-вопросом) ---
 @app.post("/comment/<int:rid>")
 def comment_route(rid):
     if is_ip_spam(request.remote_addr): return redirect(url_for("recipe_page", rid=rid))
     username = (request.form.get("username") or "webuser").strip()[:32]
     text = (request.form.get("text") or "").strip()[:500]
     captcha = (request.form.get("captcha") or "").strip()
-    if captcha != "5":  # простой вопрос 2+3
+    if captcha != "5":
         flash("Неверный ответ на вопрос. Попробуйте ещё раз.")
         return redirect(url_for("recipe_page", rid=rid))
     if text:
         add_comment(rid, username, text)
     return redirect(url_for("recipe_page", rid=rid))
 
-# --- profile ---
 @app.route("/u/<username>")
 def user_page(username):
     u = get_user(username)
     recs = get_user_recipes(username, limit=50)
     return render_template("user.html", u=u, recipes=recs, username=username)
 
-# --- chat ---
 @app.route("/chat", methods=["GET","POST"])
 def chat_page():
     if request.method == "POST":
@@ -235,7 +233,6 @@ def chat_page():
     msgs = get_chat_messages(limit=100)
     return render_template("chat.html", msgs=msgs)
 
-# --- invite join ---
 @app.route("/join/<code>")
 def join_via_invite(code):
     owner = use_invite(code)
@@ -271,7 +268,6 @@ async def _process_update(data):
         from aiogram import Bot, Dispatcher
         Bot.set_current(bot)
         Dispatcher.set_current(dp)
-        # регистрируем юзера по первому апдейту (для профиля)
         user = None
         if upd.message and upd.message.from_user:
             user = upd.message.from_user
