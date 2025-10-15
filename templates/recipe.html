@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}{{ r.title }} — рецепт{% endblock %}
+{% block content %}
+<div class="row">
+  <div class="col-lg-7">
+    {% if r.photo_url %}
+      <img class="img-fluid rounded mb-3" src="{{ r.photo_url }}" alt="Фото">
+    {% endif %}
+  </div>
+  <div class="col-lg-5">
+    <h2>{{ r.title }}</h2>
+    <p class="text-muted">@{{ r.username }}</p>
+    <p>{{ r.ai_caption or r.description }}</p>
+    <form method="post" action="/like/{{ r.id }}" class="mb-3">
+      <button class="btn btn-danger">❤️ {{ r.likes }}</button>
+    </form>
+
+    <h5 class="mt-4">Комментарии</h5>
+    <ul class="list-group mb-3">
+      {% for c in r.comments %}
+      <li class="list-group-item">
+        <strong>@{{ c.username }}</strong> <small class="text-muted">{{ c.created_at }}</small>
+        <div>{{ c.text }}</div>
+      </li>
+      {% else %}
+      <li class="list-group-item text-muted">Пока нет комментариев.</li>
+      {% endfor %}
+    </ul>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div class="alert alert-warning">{{ messages[0] }}</div>
+      {% endif %}
+    {% endwith %}
+
+    <form method="post" action="/comment/{{ r.id }}">
+      <div class="mb-2">
+        <input name="username" class="form-control" placeholder="Ваш ник (необязательно)">
+      </div>
+      <div class="mb-2">
+        <textarea name="text" class="form-control" placeholder="Ваш комментарий" required></textarea>
+      </div>
+      <div class="mb-2">
+        <label>Сколько будет 2 + 3?</label>
+        <input name="captcha" class="form-control" placeholder="Ответ" required>
+      </div>
+      <button class="btn btn-primary">Отправить</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

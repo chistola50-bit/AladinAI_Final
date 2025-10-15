@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Топ недели{% endblock %}
+{% block content %}
+<h2 class="mb-3">🏆 Топ недели</h2>
+<div class="list-group">
+  {% for r in recipes %}
+  <a class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" href="/recipe/{{ r.id }}">
+    <div>
+      <strong>{{ r.title }}</strong> — @{{ r.username }}
+    </div>
+    <span>❤️ {{ r.likes }}</span>
+  </a>
+  {% endfor %}
+</div>
+{% endblock %}

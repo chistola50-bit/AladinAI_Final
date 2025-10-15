@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Лента рецептов{% endblock %}
+{% block content %}
+<h2 class="mb-3">Лента рецептов</h2>
+<div class="row g-3">
+  {% for r in recipes %}
+  <div class="col-12 col-md-6 col-lg-4">
+    <div class="card h-100">
+      {% if r.photo_url %}
+        <img class="card-img-top" src="{{ r.photo_url }}" alt="Фото">
+      {% endif %}
+      <div class="card-body">
+        <h5 class="card-title">{{ r.title }}</h5>
+        <p class="card-text text-muted">@{{ r.username }}</p>
+        <p class="card-text">{{ (r.ai_caption or r.description)[:140] }}{% if (r.ai_caption or r.description)|length > 140 %}…{% endif %}</p>
+      </div>
+      <div class="card-footer d-flex justify-content-between align-items-center">
+        <form method="post" action="/like/{{ r.id }}">
+          <button class="btn btn-sm btn-outline-danger">❤️ {{ r.likes }}</button>
+        </form>
+        <a class="btn btn-sm btn-outline-primary" href="/recipe/{{ r.id }}">Открыть</a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

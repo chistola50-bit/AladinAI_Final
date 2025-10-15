@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Общий чат{% endblock %}
+{% block content %}
+<h2>💬 Общий чат</h2>
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <div class="alert alert-warning">{{ messages[0] }}</div>
+  {% endif %}
+{% endwith %}
+<form method="post" class="mb-3">
+  <div class="row g-2">
+    <div class="col-md-3"><input name="username" class="form-control" placeholder="Ваш ник (необязательно)"></div>
+    <div class="col-md-6"><input name="text" class="form-control" placeholder="Сообщение" required></div>
+    <div class="col-md-2"><input name="captcha" class="form-control" placeholder="2+3?" required></div>
+    <div class="col-md-1"><button class="btn btn-primary w-100">OK</button></div>
+  </div>
+</form>
+
+<ul class="list-group">
+  {% for m in msgs %}
+  <li class="list-group-item">
+    <strong>@{{ m.username }}</strong> <small class="text-muted">{{ m.created_at }}</small>
+    <div>{{ m.text }}</div>
+  </li>
+  {% else %}
+  <li class="list-group-item text-muted">Пока пусто.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

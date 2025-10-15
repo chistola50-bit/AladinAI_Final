@@ -1,0 +1,6 @@
+body { background: #0b0d10; color: #e9eef5; }
+.card, .list-group-item { background: #141a20; color: #e9eef5; border: 1px solid #202732; }
+.navbar { border-bottom: 1px solid #202732; }
+.btn-outline-light { border-color: #94a3b8; color: #e2e8f0; }
+.btn-outline-light:hover { background: #e2e8f0; color: #0b0d10; }
+.card-img-top { object-fit: cover; height: 220px; }
